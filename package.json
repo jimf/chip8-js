@@ -1,0 +1,39 @@
+{
+  "name": "chip8-js",
+  "version": "0.1.0",
+  "description": "Chip-8 interpreter in JavaScript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jimf/chip8-js"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "build": "rimraf dist && mkdir dist && cp static/index.html dist && npm run build-js && npm run build-css",
+    "build-js": "browserify static/index.js | minify > dist/main.js",
+    "build-css": "uglifycss static/styles.css > dist/styles.css",
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "start": "budo ./static/index.js --dir=./static --live --open --host=0.0.0.0",
+    "test": "nyc tape test/*.js"
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  },
+  "keywords": [],
+  "author": "Jim Fitzpatrick",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimf/chip8-js/issues"
+  },
+  "homepage": "https://github.com/jimf/chip8-js",
+  "dependencies": {},
+  "devDependencies": {
+    "budo": "^11.2.2",
+    "nyc": "^12.0.2",
+    "standard": "^11.0.1",
+    "tape": "^4.9.1"
+  }
+}

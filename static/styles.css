@@ -1,0 +1,53 @@
+*, :before, :after {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #202A35;
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+}
+
+.row {
+  display: flex;
+  height: 50%;
+  justify-content: space-between;
+}
+
+.col {
+  border: 1px inset #5F7077;
+  flex: 1;
+  margin: 4px;
+}
+
+.col:first-child {
+  flex: 2;
+}
+
+.memory-pane,
+.state-pane {
+  overflow: hidden;
+  white-space: pre;
+}
+
+#canvas {
+  background-color: #000;
+  height: 256px;
+  width: 512px;
+  /* height: 100%; */
+  /* width: 100%; */
+}

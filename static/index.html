@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Joy</title>
+  <meta name="description" content="Chip8 Interpreter">
+  <meta name="author" content="Jim Fitzpatrick">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//fonts.googleapis.com/css?family=Jura:400,300,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col display-pane">
+        <canvas id="canvas" width="512" height="256"></canvas>
+      </div>
+      <div class="col memory-pane"></div>
+    </div>
+    <div class="row">
+      <div class="col output-pane"></div>
+      <div class="col state-pane"></div>
+    </div>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>
