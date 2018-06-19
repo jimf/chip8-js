@@ -79,17 +79,23 @@ Chip8.prototype.next = function next () {
 }
 
 Chip8.prototype.updateTimers = function updateTimers (msSinceLastUpdate) {
-  const cyclesPassed = Math.round(this.cyclesPerSecond / 1000 * msSinceLastUpdate)
+  const cyclesPassed = Math.floor(60 / 1000 * msSinceLastUpdate)
+  const updated = cyclesPassed > 0 && (this.dt > 0 || this.st > 0)
   if (this.dt > 0) {
     this.dt = Math.max(0, this.dt - cyclesPassed)
   }
   if (this.st > 0) {
     this.st = Math.max(0, this.st - cyclesPassed)
   }
+  return updated
 }
 
 Chip8.prototype.keyDown = function keyDown (idx) {
   this.keys[idx] = true
+  if (this.wait !== null) {
+    this.V[this.wait] = idx
+    this.wait = null
+  }
 }
 
 Chip8.prototype.keyUp = function keyUp (idx) {

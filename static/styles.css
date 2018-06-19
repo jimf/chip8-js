@@ -18,6 +18,15 @@ body {
   height: 100%;
 }
 
+a, a:active, a:visited {
+  color: #e8f4f8;
+}
+
+a:focus {
+  color: #99cfe0;
+  outline: 0;
+}
+
 .container {
   height: 100%;
 }
@@ -38,8 +47,15 @@ body {
   flex: 2;
 }
 
+.display-pane {
+  background-color: #000;
+  text-align: center;
+}
+
 .memory-pane,
+.output-pane,
 .state-pane {
+  font-size: 2.2vh;
   overflow: hidden;
   white-space: pre;
 }
@@ -47,6 +63,10 @@ body {
 #canvas {
   background-color: #000;
   height: 256px;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
   width: 512px;
   /* height: 100%; */
   /* width: 100%; */

@@ -1,14 +1,119 @@
 const Chip8 = require('../')
+const KeyboardInput = require('./keyboard_input')
 
 const chip8 = Chip8()
+const kb = KeyboardInput(chip8)
 const el = {
   canvas: document.getElementById('canvas'),
   memory: document.querySelector('.memory-pane'),
+  output: document.querySelector('.output-pane__output'),
   vm: document.querySelector('.state-pane')
 }
 const ctx = el.canvas.getContext('2d')
 let canvasW
 let canvasH
+
+const roms = {
+  '15PUZZLE': {
+    name: '15PUZZLE',
+    keys: { /* TODO */ }
+  },
+  BLINKY: {
+    name: 'BLINKY',
+    keys: { /* TODO */ }
+  },
+  BLITZ: {
+    name: 'BLITZ',
+    keys: {
+      5: 'Drop'
+    }
+  },
+  BRIX: {
+    name: 'BRIX',
+    keys: { /* TODO */ }
+  },
+  CONNECT4: {
+    name: 'CONNECT4',
+    keys: { /* TODO */ }
+  },
+  GUESS: {
+    name: 'GUESS',
+    keys: { /* TODO */ }
+  },
+  HIDDEN: {
+    name: 'HIDDEN',
+    keys: { /* TODO */ }
+  },
+  INVADERS: {
+    name: 'INVADERS',
+    keys: { /* TODO */ }
+  },
+  KALEID: {
+    name: 'KALEID',
+    keys: { /* TODO */ }
+  },
+  MAZE: {
+    name: 'MAZE',
+    keys: { /* TODO */ }
+  },
+  MERLIN: {
+    name: 'MERLIN',
+    keys: { /* TODO */ }
+  },
+  MISSILE: {
+    name: 'MISSILE',
+    keys: { /* TODO */ }
+  },
+  PONG: {
+    name: 'PONG',
+    keys: { /* TODO */ }
+  },
+  PONG2: {
+    name: 'PONG2',
+    keys: { /* TODO */ }
+  },
+  PUZZLE: {
+    name: 'PUZZLE',
+    keys: { /* TODO */ }
+  },
+  SYZYGY: {
+    name: 'SYZYGY',
+    keys: { /* TODO */ }
+  },
+  TANK: {
+    name: 'TANK',
+    keys: { /* TODO */ }
+  },
+  TETRIS: {
+    name: 'TETRIS',
+    keys: {
+      4: 'Rotate',
+      5: 'Move left',
+      6: 'Move right',
+      7: 'Drop'
+    }
+  },
+  TICTAC: {
+    name: 'TICTAC',
+    keys: { /* TODO */ }
+  },
+  UFO: {
+    name: 'UFO',
+    keys: { /* TODO */ }
+  },
+  VBRIX: {
+    name: 'VBRIX',
+    keys: { /* TODO */ }
+  },
+  VERS: {
+    name: 'VERS',
+    keys: { /* TODO */ }
+  },
+  WIPEOFF: {
+    name: 'WIPEOFF',
+    keys: { /* TODO */ }
+  }
+}
 
 function updateDims () {
   canvasW = Math.floor(el.canvas.clientWidth)
@@ -56,13 +161,30 @@ function renderDisplay (c8) {
 
 function renderMemory (c8) {
   const show = 15
-  let start = Math.max(0, c8.vm.pc - 2)
+  let start = Math.max(512, c8.vm.pc - 2)
   let end = Math.min(c8.vm.pc + ((show * 2) - 2), 4096)
   const result = []
   for (let i = start; i <= end; i += 2) {
     result.push(c8.disassemble(i))
   }
   el.memory.textContent = result.join('\n')
+}
+
+function renderOutput (game, rom) {
+  const gameHelp = Object.keys(game.keys).map((k) => {
+    const help = game.keys[k].toUpperCase()
+    const keys = kb.keyNames(k)
+    return `  ${keys.join('/')}: ${help}`
+  }).join('\n')
+  el.output.textContent = `
+LOADING ${game.name}
+${rom.byteLength} BYTES
+
+KEYS:
+${gameHelp}
+
+STARTING PROGRAM;
+`.trim()
 }
 
 function renderVm (c8) {
@@ -87,26 +209,45 @@ VF = ${formatHex2(c8.vm.V[0xF])}
 }
 
 window.chip8 = chip8
-getRom('TETRIS').then((rom) => {
+const game = roms.TETRIS
+getRom(game.name).then((rom) => {
   chip8.load(rom)
   updateDims()
   ctx.fillStyle = '#8F9185'
   ctx.strokeStyle = '#8F9185'
 
-  function run () {
-    chip8.step()
-    renderDisplay(chip8)
-    renderMemory(chip8)
-    renderVm(chip8)
+  function run (start) {
+    if (window.PAUSED !== true) {
+      chip8.step()
+      renderDisplay(chip8)
+      renderMemory(chip8)
+      renderVm(chip8)
+    }
     if (window.STOP !== true) {
       window.requestAnimationFrame(run)
     }
   }
 
+  function onKeydown (e) {
+    kb.onKeydown(e)
+    if (e.which === 32) {
+      chip8.step()
+      renderDisplay(chip8)
+      renderMemory(chip8)
+      renderVm(chip8)
+    }
+  }
+
+  function onKeyup (e) {
+    kb.onKeydown(e)
+  }
+
+  renderDisplay(chip8)
+  renderMemory(chip8)
+  renderOutput(game, rom)
+  renderVm(chip8)
   run()
-  // window.addEventListener('keydown', (e) => {
-  //   if (e.which === 32) {
-  //     run()
-  //   }
-  // })
+
+  window.addEventListener('keydown', onKeydown)
+  window.addEventListener('keyup', onKeyup)
 })

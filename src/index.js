@@ -32,42 +32,46 @@ function disassemble (vm, addr) {
   const F0FF = opcode & 0xF0FF
 
   switch (true) {
-    case F0FF === 0x00E0: return `${formatOpcode(opcode)} - CLS`
-    case F0FF === 0x00EE: return `${formatOpcode(opcode)} - RET`
-    case F000 === 0x0000: return `${formatOpcode(opcode)} - SYS  ${formatNnn(nnn)}`
-    case F000 === 0x1000: return `${formatOpcode(opcode)} - JP   ${formatNnn(nnn)}`
-    case F000 === 0x2000: return `${formatOpcode(opcode)} - CALL ${formatNnn(nnn)}`
-    case F000 === 0x3000: return `${formatOpcode(opcode)} - SE   ${formatReg(x)}, ${formatKk(kk)}`
-    case F000 === 0x4000: return `${formatOpcode(opcode)} - SNE  ${formatReg(x)}, ${formatKk(kk)}`
-    case F00F === 0x5000: return `${formatOpcode(opcode)} - SE   ${formatReg(x)}, ${formatReg(y)}`
-    case F000 === 0x6000: return `${formatOpcode(opcode)} - LD   ${formatReg(x)}, ${formatKk(kk)}`
-    case F000 === 0x7000: return `${formatOpcode(opcode)} - ADD  ${formatReg(x)}, ${formatKk(kk)}`
-    case F00F === 0x8000: return `${formatOpcode(opcode)} - LD   ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8001: return `${formatOpcode(opcode)} - OR   ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8002: return `${formatOpcode(opcode)} - AND  ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8003: return `${formatOpcode(opcode)} - XOR  ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8004: return `${formatOpcode(opcode)} - ADD  ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8005: return `${formatOpcode(opcode)} - SUB  ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x8006: return `${formatOpcode(opcode)} - SHR  ${formatReg(x)}`
-    case F00F === 0x8007: return `${formatOpcode(opcode)} - SUBN ${formatReg(x)}, ${formatReg(y)}`
-    case F00F === 0x800E: return `${formatOpcode(opcode)} - SHL  ${formatReg(x)}`
-    case F00F === 0x9000: return `${formatOpcode(opcode)} - SNE  ${formatReg(x)}, ${formatReg(y)}`
-    case F000 === 0xA000: return `${formatOpcode(opcode)} - LD   I, ${formatNnn(nnn)}`
-    case F000 === 0xB000: return `${formatOpcode(opcode)} - JP   V0, ${formatNnn(nnn)}`
-    case F000 === 0xC000: return `${formatOpcode(opcode)} - RND  ${formatReg(x)}, ${formatKk(kk)}`
-    case F000 === 0xD000: return `${formatOpcode(opcode)} - DRW  ${formatReg(x)}, ${formatReg(y)}, ${formatHex(n)}`
-    case F0FF === 0xE09E: return `${formatOpcode(opcode)} - SKP  ${formatReg(x)}`
-    case F0FF === 0xE0A1: return `${formatOpcode(opcode)} - SKNP ${formatReg(x)}`
-    case F0FF === 0xF007: return `${formatOpcode(opcode)} - LD   ${formatReg(x)}, DT`
-    case F0FF === 0xF00A: return `${formatOpcode(opcode)} - LD   ${formatReg(x)}, K`
-    case F0FF === 0xF015: return `${formatOpcode(opcode)} - LD   DT, ${formatReg(x)}`
-    case F0FF === 0xF018: return `${formatOpcode(opcode)} - LD   ST, ${formatReg(x)}`
-    case F0FF === 0xF01E: return `${formatOpcode(opcode)} - ADD  I, ${formatReg(x)}`
-    case F0FF === 0xF029: return `${formatOpcode(opcode)} - LD   F, ${formatReg(x)}`
-    case F0FF === 0xF033: return `${formatOpcode(opcode)} - LD   B, ${formatReg(x)}`
-    case F0FF === 0xF055: return `${formatOpcode(opcode)} - LD   [I], ${formatReg(x)}`
-    case F0FF === 0xF065: return `${formatOpcode(opcode)} - Ld   ${formatReg(x)}, [I]`
-    default: throw new Error(`Invalid opcode: ${opcode}`)
+    case F0FF === 0x00E0: return `${formatOpcode(addr)} - CLS`
+    case F0FF === 0x00EE: return `${formatOpcode(addr)} - RET`
+    case F000 === 0x0000: return `${formatOpcode(addr)} - SYS  ${formatNnn(nnn)}`
+    case F000 === 0x1000: return `${formatOpcode(addr)} - JP   ${formatNnn(nnn)}`
+    case F000 === 0x2000: return `${formatOpcode(addr)} - CALL ${formatNnn(nnn)}`
+    case F000 === 0x3000: return `${formatOpcode(addr)} - SE   ${formatReg(x)}, ${formatKk(kk)}`
+    case F000 === 0x4000: return `${formatOpcode(addr)} - SNE  ${formatReg(x)}, ${formatKk(kk)}`
+    case F00F === 0x5000: return `${formatOpcode(addr)} - SE   ${formatReg(x)}, ${formatReg(y)}`
+    case F000 === 0x6000: return `${formatOpcode(addr)} - LD   ${formatReg(x)}, ${formatKk(kk)}`
+    case F000 === 0x7000: return `${formatOpcode(addr)} - ADD  ${formatReg(x)}, ${formatKk(kk)}`
+    case F00F === 0x8000: return `${formatOpcode(addr)} - LD   ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8001: return `${formatOpcode(addr)} - OR   ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8002: return `${formatOpcode(addr)} - AND  ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8003: return `${formatOpcode(addr)} - XOR  ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8004: return `${formatOpcode(addr)} - ADD  ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8005: return `${formatOpcode(addr)} - SUB  ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x8006: return `${formatOpcode(addr)} - SHR  ${formatReg(x)}`
+    case F00F === 0x8007: return `${formatOpcode(addr)} - SUBN ${formatReg(x)}, ${formatReg(y)}`
+    case F00F === 0x800E: return `${formatOpcode(addr)} - SHL  ${formatReg(x)}`
+    case F00F === 0x9000: return `${formatOpcode(addr)} - SNE  ${formatReg(x)}, ${formatReg(y)}`
+    case F000 === 0xA000: return `${formatOpcode(addr)} - LD   I, ${formatNnn(nnn)}`
+    case F000 === 0xB000: return `${formatOpcode(addr)} - JP   V0, ${formatNnn(nnn)}`
+    case F000 === 0xC000: return `${formatOpcode(addr)} - RND  ${formatReg(x)}, ${formatKk(kk)}`
+    case F000 === 0xD000: return `${formatOpcode(addr)} - DRW  ${formatReg(x)}, ${formatReg(y)}, ${formatHex(n)}`
+    case F0FF === 0xE09E: return `${formatOpcode(addr)} - SKP  ${formatReg(x)}`
+    case F0FF === 0xE0A1: return `${formatOpcode(addr)} - SKNP ${formatReg(x)}`
+    case F0FF === 0xF007: return `${formatOpcode(addr)} - LD   ${formatReg(x)}, DT`
+    case F0FF === 0xF00A: return `${formatOpcode(addr)} - LD   ${formatReg(x)}, K`
+    case F0FF === 0xF015: return `${formatOpcode(addr)} - LD   DT, ${formatReg(x)}`
+    case F0FF === 0xF018: return `${formatOpcode(addr)} - LD   ST, ${formatReg(x)}`
+    case F0FF === 0xF01E: return `${formatOpcode(addr)} - ADD  I, ${formatReg(x)}`
+    case F0FF === 0xF029: return `${formatOpcode(addr)} - LD   F, ${formatReg(x)}`
+    case F0FF === 0xF033: return `${formatOpcode(addr)} - LD   B, ${formatReg(x)}`
+    case F0FF === 0xF055: return `${formatOpcode(addr)} - LD   [I], ${formatReg(x)}`
+    case F0FF === 0xF065: return `${formatOpcode(addr)} - Ld   ${formatReg(x)}, [I]`
+
+    // Some ROMs (e.g., BLITZ) jump to odd-numbered addresses, leaving blips in
+    // the address space. Disassembling should simply treat these invalid opcodes
+    // as unknown, and leave the exception handling to the actual step logic.
+    default: return `${formatOpcode(addr)} - ???`
   }
 }
 
@@ -154,8 +158,9 @@ module.exports = function () {
     }
 
     const now = Date.now()
-    vm.updateTimers(now - prevCycle)
-    prevCycle = now
+    if (vm.updateTimers(now - prevCycle)) {
+      prevCycle = now
+    }
   }
 
   function load (buffer) {
@@ -166,6 +171,12 @@ module.exports = function () {
     vm: vm,
     step: step,
     load: load,
-    disassemble: disassemble.bind(null, vm)
+    disassemble: disassemble.bind(null, vm),
+    keyDown (key) {
+      vm.keyDown(key)
+    },
+    keyUp (key) {
+      vm.keyUp(key)
+    }
   }
 }
