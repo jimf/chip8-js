@@ -71,13 +71,33 @@ function MemoryPanel (el) {
 }
 
 function OutputPanel (el) {
-  function render (game, rom, kb) {
+  const nav = el.querySelector('.output-pane__nav')
+  const navList = el.querySelector('.output-pane__navlist')
+  const output = el.querySelector('.output-pane__output')
+
+  Object.keys(roms).forEach((name) => {
+    const li = document.createElement('li')
+    const a = document.createElement('a')
+    a.setAttribute('href', `#/${name}`)
+    a.textContent = name
+    li.appendChild(a)
+    navList.appendChild(li)
+  })
+
+  function renderIndex () {
+    nav.style.display = 'block'
+    output.textContent = ''
+  }
+
+  function renderGame (props) {
+    const { game, rom, kb } = props
     const gameHelp = Object.keys(game.keys).map((k) => {
       const help = game.keys[k].toUpperCase()
       const keys = kb.keyNames(k)
       return `  ${keys.join('/')}: ${help}`
     }).join('\n')
-    el.textContent = `
+    nav.style.display = 'none'
+    output.textContent = `
 LOADING ${game.name}
 ${rom.byteLength} BYTES
 
@@ -86,6 +106,14 @@ ${gameHelp}
 
 STARTING PROGRAM;
 `.trim()
+  }
+
+  function render (props) {
+    if (props && props.game) {
+      renderGame(props)
+    } else {
+      renderIndex()
+    }
   }
 
   return {
@@ -128,56 +156,71 @@ VF = ${formatHex2(c8.vm.V[0xF])}
   }
 }
 
-const canvasPanel = CanvasPanel(document.getElementById('canvas'))
-const memoryPanel = MemoryPanel(document.querySelector('.memory-pane'))
-const outputPanel = OutputPanel(document.querySelector('.output-pane__output'))
-const vmPanel = VmPanel(document.querySelector('.state-pane'))
+function App () {
+  const canvasPanel = CanvasPanel(document.getElementById('canvas'))
+  const memoryPanel = MemoryPanel(document.querySelector('.memory-pane'))
+  const outputPanel = OutputPanel(document.querySelector('.output-pane'))
+  const vmPanel = VmPanel(document.querySelector('.state-pane'))
+  const router = Router()
 
-function loadGame (name) {
-  const game = roms[name]
-  const chip8 = Chip8()
-  const kb = KeyboardInput(chip8)
-
-  function renderVm () {
-    canvasPanel.render(chip8)
-    memoryPanel.render(chip8)
-    vmPanel.render(chip8)
+  function index () {
+    outputPanel.render()
   }
 
-  function run (start) {
-    if (window.PAUSED !== true) {
-      chip8.step()
+  function loadGame (name) {
+    const game = roms[name]
+    const chip8 = Chip8()
+    const kb = KeyboardInput(chip8)
+
+    function renderVm () {
+      canvasPanel.render(chip8)
+      memoryPanel.render(chip8)
+      vmPanel.render(chip8)
+    }
+
+    function run (start) {
+      if (window.PAUSED !== true) {
+        chip8.step()
+        renderVm()
+      }
+      if (window.STOP !== true) {
+        window.requestAnimationFrame(run)
+      }
+    }
+
+    function onKeydown (e) {
+      kb.onKeydown(e)
+      if (e.which === 32) {
+        chip8.step()
+        renderVm()
+      }
+    }
+
+    function onKeyup (e) {
+      kb.onKeydown(e)
+    }
+
+    window.addEventListener('keydown', onKeydown)
+    window.addEventListener('keyup', onKeyup)
+
+    getRom(game.name).then((rom) => {
+      chip8.load(rom)
+      canvasPanel.updateDims()
       renderVm()
-    }
-    if (window.STOP !== true) {
-      window.requestAnimationFrame(run)
-    }
+      outputPanel.render({ game, rom, kb })
+      run()
+    })
   }
 
-  function onKeydown (e) {
-    kb.onKeydown(e)
-    if (e.which === 32) {
-      chip8.step()
-      renderVm()
-    }
+  function start () {
+    router.start()
   }
 
-  function onKeyup (e) {
-    kb.onKeydown(e)
-  }
+  router.route(/^\/([A-Z]+)$/, loadGame)
+  router.route(/^.*$/, index)
 
-  window.addEventListener('keydown', onKeydown)
-  window.addEventListener('keyup', onKeyup)
-
-  getRom(game.name).then((rom) => {
-    chip8.load(rom)
-    canvasPanel.updateDims()
-    renderVm()
-    outputPanel.render(game, rom, kb)
-    run()
-  })
+  return { start }
 }
 
-const router = Router()
-router.route(/^\/([A-Z]+)$/, loadGame)
-router.start()
+const app = App()
+app.start()

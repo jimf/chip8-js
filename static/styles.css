@@ -57,7 +57,19 @@ a:focus {
 .state-pane {
   font-size: 2.2vh;
   overflow: hidden;
+}
+
+.pre {
   white-space: pre;
+}
+
+.output-pane__navlist {
+  list-style-type: none;
+}
+.output-pane__navlist li {
+  float: left;
+  height: 22px;
+  width: 100px;
 }
 
 #canvas {
