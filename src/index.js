@@ -77,7 +77,7 @@ function disassemble (vm, addr) {
 
 module.exports = function () {
   const vm = new Chip8()
-  let prevCycle = Date.now()
+  // let prevCycle = Date.now()
 
   function step () {
     if (vm.wait !== null) { return }
@@ -157,10 +157,10 @@ module.exports = function () {
       default: throw new Error(`Invalid opcode: ${formatOpcode(opcode)}`)
     }
 
-    const now = Date.now()
-    if (vm.updateTimers(now - prevCycle)) {
-      prevCycle = now
-    }
+    // const now = Date.now()
+    // if (vm.updateTimers(now - prevCycle)) {
+    //   prevCycle = now
+    // }
   }
 
   function load (buffer) {

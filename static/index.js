@@ -199,6 +199,9 @@ function App () {
     const game = roms[name]
     let stopped = false
     let paused = false
+    let prevRun = window.performance.now()
+    let cycles = 0
+    let timers = 0
 
     function renderVm () {
       canvasPanel.render(chip8)
@@ -209,21 +212,32 @@ function App () {
     function run (start) {
       if (stopped) { return }
       if (paused !== true) {
-        chip8.step()
+        const msSinceLastRun = start - prevRun
+        cycles += 540 / 1000 * msSinceLastRun
+        timers += 60 / 1000 * msSinceLastRun
+        while (cycles >= 1) {
+          chip8.step()
+          cycles -= 1
+        }
+        while (timers >= 1) {
+          chip8.vm.decrementTimers()
+          timers -= 1
+        }
         renderVm()
+        prevRun = start
       }
       window.requestAnimationFrame(run)
     }
 
-    events.onkeyup = (e) => {
+    events.onkeydown = (e) => {
       kb.onKeydown(e)
       if (e.which === 32) {
         chip8.step()
         renderVm()
       }
     }
-    events.onkeydown = (e) => {
-      kb.onKeydown(e)
+    events.onkeyup = (e) => {
+      kb.onKeyup(e)
     }
     getRom(game.name).then((rom) => {
       chip8.vm.reset()
@@ -231,7 +245,7 @@ function App () {
       canvasPanel.updateDims()
       renderVm()
       outputPanel.render({ game, rom, kb })
-      run()
+      window.requestAnimationFrame(run)
     })
 
     return function unroute () {

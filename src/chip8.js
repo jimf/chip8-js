@@ -17,9 +17,7 @@ const fonts = [
   0xF0, 0x80, 0xF0, 0x80, 0x80 //  F
 ]
 
-function Chip8 (opts) {
-  opts = opts || {}
-  this.cyclesPerSecond = 60 || opts.cyclesPerSecond
+function Chip8 () {
   this.reset()
 }
 
@@ -78,16 +76,13 @@ Chip8.prototype.next = function next () {
   return opcode
 }
 
-Chip8.prototype.updateTimers = function updateTimers (msSinceLastUpdate) {
-  const cyclesPassed = Math.floor(60 / 1000 * msSinceLastUpdate)
-  const updated = cyclesPassed > 0 && (this.dt > 0 || this.st > 0)
+Chip8.prototype.decrementTimers = function decrementTimers () {
   if (this.dt > 0) {
-    this.dt = Math.max(0, this.dt - cyclesPassed)
+    this.dt -= 1
   }
   if (this.st > 0) {
-    this.st = Math.max(0, this.st - cyclesPassed)
+    this.st -= 1
   }
-  return updated
 }
 
 Chip8.prototype.keyDown = function keyDown (idx) {

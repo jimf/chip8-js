@@ -21,7 +21,7 @@ and thought I'd take a stab at recreating the UI for the web.
 - [x] ROM interpreter
 - [ ] Assembler
 - [ ] Web-based front end
-  - [ ] ROM selection interface
+  - [x] ROM selection interface
   - [ ] Dynamic canvas size
   - [ ] Better handling of portrait/landscape orientations
 - [ ] Publish front end to GitHub pages
