@@ -31,6 +31,11 @@ function CanvasPanel (el) {
   ctx.strokeStyle = '#8F9185'
 
   function render (c8) {
+    if (!c8) {
+      ctx.clearRect(0, 0, canvasW, canvasH)
+      return
+    }
+
     ctx.clearRect(0, 0, canvasW, canvasH)
     const spriteW = Math.round(canvasW / 64)
     const spriteH = Math.round(canvasH / 32)
@@ -55,6 +60,11 @@ function CanvasPanel (el) {
 
 function MemoryPanel (el) {
   function render (c8) {
+    if (!c8) {
+      el.textContent = ''
+      return
+    }
+
     const show = 15
     let start = Math.max(512, c8.vm.pc - 2)
     let end = Math.min(c8.vm.pc + ((show * 2) - 2), 4096)
@@ -131,6 +141,11 @@ function VmPanel (el) {
   }
 
   function render (c8) {
+    if (!c8) {
+      el.textContent = ''
+      return
+    }
+
     el.textContent = `
 V0 = ${formatHex2(c8.vm.V[0x0])}      DT = ${formatHex2(c8.vm.dt)}
 V1 = ${formatHex2(c8.vm.V[0x1])}      ST = ${formatHex2(c8.vm.st)}
@@ -162,15 +177,28 @@ function App () {
   const outputPanel = OutputPanel(document.querySelector('.output-pane'))
   const vmPanel = VmPanel(document.querySelector('.state-pane'))
   const router = Router()
+  const chip8 = Chip8()
+  const kb = KeyboardInput(chip8)
+  const events = {
+    handleEvent (e) {
+      const handler = this[`on${e.type}`]
+      if (handler) {
+        handler(e)
+      }
+    }
+  }
 
   function index () {
+    canvasPanel.render()
+    memoryPanel.render()
     outputPanel.render()
+    vmPanel.render()
   }
 
   function loadGame (name) {
     const game = roms[name]
-    const chip8 = Chip8()
-    const kb = KeyboardInput(chip8)
+    let stopped = false
+    let paused = false
 
     function renderVm () {
       canvasPanel.render(chip8)
@@ -179,48 +207,52 @@ function App () {
     }
 
     function run (start) {
-      if (window.PAUSED !== true) {
+      if (stopped) { return }
+      if (paused !== true) {
         chip8.step()
         renderVm()
       }
-      if (window.STOP !== true) {
-        window.requestAnimationFrame(run)
-      }
+      window.requestAnimationFrame(run)
     }
 
-    function onKeydown (e) {
+    events.onkeyup = (e) => {
       kb.onKeydown(e)
       if (e.which === 32) {
         chip8.step()
         renderVm()
       }
     }
-
-    function onKeyup (e) {
+    events.onkeydown = (e) => {
       kb.onKeydown(e)
     }
-
-    window.addEventListener('keydown', onKeydown)
-    window.addEventListener('keyup', onKeyup)
-
     getRom(game.name).then((rom) => {
+      chip8.vm.reset()
       chip8.load(rom)
       canvasPanel.updateDims()
       renderVm()
       outputPanel.render({ game, rom, kb })
       run()
     })
+
+    return function unroute () {
+      stopped = true
+      delete events.onkeyup
+      delete events.onkeydown
+    }
   }
 
   function start () {
+    document.addEventListener('keydown', events)
+    document.addEventListener('keyup', events)
     router.start()
   }
 
-  router.route(/^\/([A-Z]+)$/, loadGame)
+  router.route(new RegExp(`^/(${Object.keys(roms).join('|')})$`), loadGame)
   router.route(/^.*$/, index)
 
-  return { start }
+  return { start, chip8 }
 }
 
 const app = App()
 app.start()
+window.app = app

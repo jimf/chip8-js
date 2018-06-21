@@ -263,7 +263,8 @@ Chip8.prototype.shiftRight = function shiftRight (x) {
 /**
  * 8xy7 - SUBN Vx, Vy
  * Set Vx = Vy - Vx, set VF = NOT borrow.
- * If Vy > Vx, then VF is set to 1, otherwise 0. Then Vx is subtracted from Vy, and the results stored in Vx.
+ * If Vy > Vx, then VF is set to 1, otherwise 0. Then Vx is subtracted from Vy,
+ * and the results stored in Vx.
  */
 Chip8.prototype.subnVxVy = function subnVxVy (x, y) {
   this.V[0xF] = this.V[y] > this.V[x] ? 1 : 0
@@ -440,8 +441,7 @@ Chip8.prototype.saveRegs = function saveRegs (x) {
  * registers V0 through Vx.
  */
 Chip8.prototype.loadRegs = function loadRegs (x) {
-  const end = this.V[x]
-  for (let i = 0; i <= end; i += 1) {
+  for (let i = 0; i <= x; i += 1) {
     this.V[i] = this.memory[this.I + i]
   }
 }

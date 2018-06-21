@@ -192,13 +192,16 @@ test('state: 8xy3 - XOR Vx, Vy', (t) => {
 })
 
 test('state: 8xy4 - ADD Vx, Vy', (t) => {
-  const bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
-  bytes[1] -= ((bytes[1] % 16) - 4)
-  const opcode = createOpcode(bytes)
+  let bytes
+  let opcode
+  while (!opcode || opcode.x === 0xF || opcode.y === 0xF) {
+    bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
+    bytes[1] -= ((bytes[1] % 16) - 4)
+    opcode = createOpcode(bytes)
+  }
   const subject = setup({ rom: bytes })
   subject.vm.V[opcode.x] = rand(0x00, 0xFF)
   subject.vm.V[opcode.y] = rand(0x00, 0xFF)
-  // FIXME: flap exp/act: 235/250
   const expected = uint8(subject.vm.V[opcode.x] + subject.vm.V[opcode.y])
   const expectedCarry = (subject.vm.V[opcode.x] + subject.vm.V[opcode.y]) > 255
   subject.step()
@@ -208,25 +211,32 @@ test('state: 8xy4 - ADD Vx, Vy', (t) => {
 })
 
 test('state: 8xy5 - SUB Vx, Vy', (t) => {
-  const bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
-  bytes[1] -= ((bytes[1] % 16) - 5)
-  const opcode = createOpcode(bytes)
+  let bytes
+  let opcode
+  while (!opcode || opcode.x === 0xF || opcode.y === 0xF) {
+    bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
+    bytes[1] -= ((bytes[1] % 16) - 5)
+    opcode = createOpcode(bytes)
+  }
   const subject = setup({ rom: bytes })
   subject.vm.V[opcode.x] = rand(0x00, 0xFF)
   subject.vm.V[opcode.y] = rand(0x00, 0xFF)
   const expectedCarry = (subject.vm.V[opcode.x] > subject.vm.V[opcode.y]) ? 1 : 0
   const expected = uint8(subject.vm.V[opcode.x] - subject.vm.V[opcode.y])
   subject.step()
-  // FIXME: This is flapping. Not sure why. (e.g., exp/act: 114/186, 49/137)
   t.equal(subject.vm.V[opcode.x], expected, 'sets Vx = Vx - Vy')
   t.equal(subject.vm.V[0xF], expectedCarry, 'sets carry bit if result is positive')
   t.end()
 })
 
 test('state: 8xy6 - SHR Vx {, Vy}', (t) => {
-  const bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
-  bytes[1] -= ((bytes[1] % 16) - 6)
-  const opcode = createOpcode(bytes)
+  let bytes
+  let opcode
+  while (!opcode || opcode.x === 0xF || opcode.y === 0xF) {
+    bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
+    bytes[1] -= ((bytes[1] % 16) - 6)
+    opcode = createOpcode(bytes)
+  }
   const subject = setup({ rom: bytes })
   subject.vm.V[opcode.x] = rand(0x00, 0xFF)
   const expected = subject.vm.V[opcode.x] >> 1
@@ -238,13 +248,16 @@ test('state: 8xy6 - SHR Vx {, Vy}', (t) => {
 })
 
 test('state: 8xy7 - SUBN Vx, Vy', (t) => {
-  const bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
-  bytes[1] -= ((bytes[1] % 16) - 7)
-  const opcode = createOpcode(bytes)
+  let bytes
+  let opcode
+  while (!opcode || opcode.x === 0xF || opcode.y === 0xF) {
+    bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
+    bytes[1] -= ((bytes[1] % 16) - 7)
+    opcode = createOpcode(bytes)
+  }
   const subject = setup({ rom: bytes })
   subject.vm.V[opcode.x] = rand(0x00, 0xFF)
   subject.vm.V[opcode.y] = rand(0x00, 0xFF)
-  // FIXME: This is flapping. Not sure why. (e.g., exp/act: 35/117)
   const expected = uint8(subject.vm.V[opcode.y] - subject.vm.V[opcode.x])
   const expectedCarry = subject.vm.V[opcode.y] > subject.vm.V[opcode.x] ? 1 : 0
   subject.step()
@@ -254,9 +267,13 @@ test('state: 8xy7 - SUBN Vx, Vy', (t) => {
 })
 
 test('state: 8xyE - SHL Vx {, Vy}', (t) => {
-  const bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
-  bytes[1] -= ((bytes[1] % 16) - 0xE)
-  const opcode = createOpcode(bytes)
+  let bytes
+  let opcode
+  while (!opcode || opcode.x === 0xF || opcode.y === 0xF) {
+    bytes = [rand(0x80, 0x8F), rand(0x00, 0xFF)]
+    bytes[1] -= ((bytes[1] % 16) - 0xE)
+    opcode = createOpcode(bytes)
+  }
   const subject = setup({ rom: bytes })
   subject.vm.V[opcode.x] = rand(0x00, 0xFF)
   const expected = uint8(subject.vm.V[opcode.x] << 1)
@@ -450,32 +467,26 @@ test('state: Fx33 - LD B, Vx', (t) => {
 })
 
 test('state: Fx55 - LD [I], Vx', (t) => {
-  const bytes = [rand(0xF0, 0xFF), 0x55]
-  const opcode = createOpcode(bytes)
+  const bytes = [0xFF, 0x55]
   const subject = setup({ rom: bytes })
-  subject.vm.V[opcode.x] = rand(0, 0xE) + 1
-  // FIXME: flaps. expected is undefined
-  for (let i = 0; i <= subject.vm.V[opcode.x]; i += 1) {
+  for (let i = 0; i <= 0xF; i += 1) {
     subject.vm.V[i] = rand(0, 0xFF)
   }
   subject.step()
-  for (let i = 0; i <= subject.vm.V[opcode.x]; i += 1) {
+  for (let i = 0; i <= 0xF; i += 1) {
     t.equal(subject.vm.memory[subject.vm.I + i], subject.vm.V[i])
   }
   t.end()
 })
 
 test('state: Fx65 - LD Vx, [I]', (t) => {
-  const bytes = [rand(0xF0, 0xFF), 0x65]
-  const opcode = createOpcode(bytes)
+  const bytes = [0xFF, 0x65]
   const subject = setup({ rom: bytes })
-  subject.vm.V[opcode.x] = rand(0, 0xE) + 1
-  // FIXME: flaps. expected is undefined
-  for (let i = 0; i <= subject.vm.V[opcode.x]; i += 1) {
+  for (let i = 0; i <= 0xF; i += 1) {
     subject.vm.memory[subject.vm.I + i] = rand(0, 0xFF)
   }
   subject.step()
-  for (let i = 0; i <= subject.vm.V[opcode.x]; i += 1) {
+  for (let i = 0; i <= 0xF; i += 1) {
     t.equal(subject.vm.V[i], subject.vm.memory[subject.vm.I + i])
   }
   t.end()

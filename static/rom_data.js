@@ -5,7 +5,13 @@ module.exports = {
   },
   BLINKY: {
     name: 'BLINKY',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Reset',
+      3: 'Up',
+      6: 'Down',
+      7: 'Left',
+      8: 'Right'
+    }
   },
   BLITZ: {
     name: 'BLITZ',
@@ -15,27 +21,53 @@ module.exports = {
   },
   BRIX: {
     name: 'BRIX',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      6: 'Right'
+    }
   },
   CONNECT4: {
     name: 'CONNECT4',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      5: 'Drop',
+      6: 'Right'
+    }
   },
   GUESS: {
     name: 'GUESS',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'No',
+      5: 'Yes'
+    }
   },
   HIDDEN: {
     name: 'HIDDEN',
-    keys: { /* TODO */ }
+    keys: {
+      2: 'Up',
+      4: 'Left',
+      5: 'Pick',
+      6: 'Right',
+      8: 'Down'
+    }
   },
   INVADERS: {
     name: 'INVADERS',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      5: 'Fire',
+      6: 'Right'
+    }
   },
   KALEID: {
     name: 'KALEID',
-    keys: { /* TODO */ }
+    keys: {
+      2: 'Up',
+      4: 'Left',
+      6: 'Right',
+      8: 'Down',
+      0: 'Finish'
+    }
   },
   MAZE: {
     name: 'MAZE',
@@ -43,19 +75,34 @@ module.exports = {
   },
   MERLIN: {
     name: 'MERLIN',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      6: 'Right'
+    }
   },
   MISSILE: {
     name: 'MISSILE',
-    keys: { /* TODO */ }
+    keys: {
+      8: 'Fire'
+    }
   },
   PONG: {
     name: 'PONG',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Left paddle up',
+      4: 'Left paddle down',
+      0xC: 'Right paddle up',
+      0xD: 'Right paddle down'
+    }
   },
   PONG2: {
     name: 'PONG2',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Left paddle up',
+      4: 'Left paddle down',
+      0xC: 'Right paddle up',
+      0xD: 'Right paddle down'
+    }
   },
   PUZZLE: {
     name: 'PUZZLE',
@@ -63,11 +110,25 @@ module.exports = {
   },
   SYZYGY: {
     name: 'SYZYGY',
-    keys: { /* TODO */ }
+    keys: {
+      3: 'Up',
+      6: 'Down',
+      7: 'Left',
+      8: 'Right',
+      0xB: 'Show score',
+      0xE: 'No border',
+      0xF: 'Border'
+    }
   },
   TANK: {
     name: 'TANK',
-    keys: { /* TODO */ }
+    keys: {
+      2: 'Up',
+      4: 'Left',
+      5: 'Fire',
+      6: 'Right',
+      8: 'Down'
+    }
   },
   TETRIS: {
     name: 'TETRIS',
@@ -80,22 +141,52 @@ module.exports = {
   },
   TICTAC: {
     name: 'TICTAC',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Select top left',
+      2: 'Select top middle',
+      3: 'Select top right',
+      4: 'Select middle left',
+      5: 'Select middle middle',
+      6: 'Select middle right',
+      7: 'Select bottom left',
+      8: 'Select bottom middle',
+      9: 'Select bottom right'
+    }
   },
   UFO: {
     name: 'UFO',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      5: 'Up',
+      6: 'Right'
+    }
   },
   VBRIX: {
     name: 'VBRIX',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Up',
+      4: 'Down',
+      7: 'Start'
+    }
   },
   VERS: {
     name: 'VERS',
-    keys: { /* TODO */ }
+    keys: {
+      1: 'Player 1 left',
+      2: 'Player 1 right',
+      7: 'Player 1 up',
+      0xA: 'Player 1 down',
+      0xC: 'Player 2 up',
+      0xD: 'Player 2 down',
+      0xB: 'Player 2 left',
+      0xF: 'Player 2 right'
+    }
   },
   WIPEOFF: {
     name: 'WIPEOFF',
-    keys: { /* TODO */ }
+    keys: {
+      4: 'Left',
+      6: 'Right'
+    }
   }
 }

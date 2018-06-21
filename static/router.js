@@ -9,7 +9,7 @@ module.exports = function () {
       if (unroute) {
         unroute()
       }
-      return route.callback(hash.match(route.route).slice(1))
+      unroute = route.callback(hash.match(route.route).slice(1))
     }
   }
 
