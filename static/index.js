@@ -3,6 +3,17 @@ const KeyboardInput = require('./keyboard_input')
 const Router = require('./router')
 const roms = require('./rom_data')
 
+function throttle (callback, limit) {
+  let wait = false
+  return function () {
+    if (!wait) {
+      callback.apply(null, arguments)
+      wait = true
+      setTimeout(() => { wait = false }, limit)
+    }
+  }
+}
+
 function getRom (name) {
   return new Promise((resolve, reject) => {
     const req = new window.XMLHttpRequest()
@@ -23,12 +34,10 @@ function getRom (name) {
 }
 
 function CanvasPanel (el) {
-  const ctx = el.getContext('2d')
+  const canvas = el.querySelector('canvas')
+  const ctx = canvas.getContext('2d')
   let canvasW
   let canvasH
-
-  ctx.fillStyle = '#8F9185'
-  ctx.strokeStyle = '#8F9185'
 
   function render (c8) {
     if (!c8) {
@@ -47,30 +56,48 @@ function CanvasPanel (el) {
     }
   }
 
-  function updateDims () {
-    canvasW = Math.floor(el.clientWidth)
-    canvasH = Math.floor(el.clientHeight)
+  function resize () {
+    const newWidth = el.clientWidth - (el.clientWidth % 64)
+    if (newWidth === canvasW) { return }
+    canvasW = newWidth
+    canvasH = canvasW / 2
+    canvas.width = canvasW
+    canvas.height = canvasH
+    ctx.fillStyle = '#8F9185'
+    ctx.strokeStyle = '#8F9185'
   }
+
+  resize()
 
   return {
     render: render,
-    updateDims: updateDims
+    resize: resize
   }
 }
 
 function MemoryPanel (el) {
+  const show = 15
+  let prevStart
+  let prevEnd
+
   function render (c8) {
     if (!c8) {
       el.textContent = ''
       return
     }
 
-    const show = 15
     let start = Math.max(512, c8.vm.pc - 2)
     let end = Math.min(c8.vm.pc + ((show * 2) - 2), 4096)
+    if (prevStart < c8.vm.pc && c8.vm.pc < prevEnd) {
+      start = prevStart
+      end = prevEnd
+    }
+    prevStart = start
+    prevEnd = end
+
     const result = []
     for (let i = start; i <= end; i += 2) {
-      result.push(c8.disassemble(i))
+      result.push((i === c8.vm.pc ? '>' : ' ') + c8.disassemble(i))
     }
     el.textContent = result.join('\n')
   }
@@ -172,7 +199,7 @@ VF = ${formatHex2(c8.vm.V[0xF])}
 }
 
 function App () {
-  const canvasPanel = CanvasPanel(document.getElementById('canvas'))
+  const canvasPanel = CanvasPanel(document.querySelector('.display-pane'))
   const memoryPanel = MemoryPanel(document.querySelector('.memory-pane'))
   const outputPanel = OutputPanel(document.querySelector('.output-pane'))
   const vmPanel = VmPanel(document.querySelector('.state-pane'))
@@ -185,7 +212,12 @@ function App () {
       if (handler) {
         handler(e)
       }
-    }
+    },
+    handleResize: throttle((e) => {
+      if (events.onresize) {
+        events.onresize(e)
+      }
+    }, 250)
   }
 
   function index () {
@@ -203,10 +235,14 @@ function App () {
     let cycles = 0
     let timers = 0
 
-    function renderVm () {
-      canvasPanel.render(chip8)
+    const renderVmState = throttle(() => {
       memoryPanel.render(chip8)
       vmPanel.render(chip8)
+    }, 200)
+
+    function renderVm () {
+      canvasPanel.render(chip8)
+      renderVmState(chip8)
     }
 
     function run (start) {
@@ -239,10 +275,12 @@ function App () {
     events.onkeyup = (e) => {
       kb.onKeyup(e)
     }
+    events.onresize = () => {
+      canvasPanel.resize()
+    }
     getRom(game.name).then((rom) => {
       chip8.vm.reset()
       chip8.load(rom)
-      canvasPanel.updateDims()
       renderVm()
       outputPanel.render({ game, rom, kb })
       window.requestAnimationFrame(run)
@@ -258,6 +296,7 @@ function App () {
   function start () {
     document.addEventListener('keydown', events)
     document.addEventListener('keyup', events)
+    window.addEventListener('resize', events.handleResize)
     router.start()
   }
 
