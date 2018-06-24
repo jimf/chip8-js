@@ -42,7 +42,7 @@ test('scanner recognizes decimal literals', (t) => {
 test('scanner recognizes V literals', (t) => {
   for (let i = 0; i <= 0xF; i += 1) {
     t.deepEqual(scanner(` V${i.toString(16)}`).nextToken(), { type: 'V', value: i })
-    t.deepEqual(scanner(` V${i.toString(16).toUpperCase()}`).nextToken(), { type: 'V', value: i })
+    t.deepEqual(scanner(` v${i.toString(16).toUpperCase()}`).nextToken(), { type: 'V', value: i })
   }
   t.end()
 })
@@ -55,6 +55,7 @@ test('scanner recognizes register literals', (t) => {
   ]
   cases.forEach(({ input, expected }) => {
     t.deepEqual(scanner(input).nextToken(), { type: expected, value: null })
+    t.deepEqual(scanner(input.toLowerCase()).nextToken(), { type: expected, value: null })
   })
   t.end()
 })
@@ -100,9 +101,46 @@ test('scanner recognizes label literals', (t) => {
   t.end()
 })
 
+test('scanner recognizes identifiers', (t) => {
+  const cases = [
+    { input: ' abcDEF123_', expected: 'abcDEF123_' }
+  ]
+  cases.forEach(({ input, expected }) => {
+    t.deepEqual(scanner(input).nextToken(), { type: 'Identifier', value: expected })
+  })
+  t.end()
+})
+
+test('scanner recognizes special characters', (t) => {
+  const cases = [
+    { input: ',', expected: 'Comma' }
+  ]
+  cases.forEach(({ input, expected }) => {
+    t.deepEqual(scanner(input).nextToken(), { type: expected, value: null })
+  })
+  t.end()
+})
+
+test('scanner recognizes strings', (t) => {
+  const cases = [
+    { input: '"hello world"', expected: 'hello world' },
+    { input: '`hello world`', expected: 'hello world' },
+    { input: "'hello world'", expected: 'hello world' }
+  ]
+  cases.forEach(({ input, expected }) => {
+    t.deepEqual(scanner(input).nextToken(), { type: 'String', value: expected })
+  })
+  t.end()
+})
+
 test('scanner throws for invalid inputs', (t) => {
   const cases = [
-    '#'
+    '#',
+    '"unterminated string',
+    '"invalid multiline string\n2"',
+    '%2',
+    '-feelings',
+    '$$$'
   ]
   cases.forEach((input) => {
     t.throws(scanner(input).nextToken)

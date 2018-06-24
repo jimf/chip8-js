@@ -102,21 +102,44 @@ module.exports = function (input) {
     throw new Error('Syntax error: Expected decimal literal')
   }
 
+  function scanString () {
+    const delimiter = c
+    let result = ''
+    read()
+    while (true) {
+      if (c === delimiter) {
+        return new Token('String', result)
+      } else if (pos >= input.length || c === '\n') {
+        throw new Error('Parse error: unexpected newline before string terminator')
+      }
+      result += read()
+    }
+  }
+
   function scanIdentifier () {
     let result = ''
     const myCol = col
     if (isUpper(c) || isLower(c)) {
       result += read()
       while (isUpper(c) || isLower(c) || isDigit(c) || c === '_') { result += read() }
+      const uresult = result.toUpperCase()
       switch (true) {
-        case myCol === 1: return new Token('Label', result)
-        case result === 'I':
-        case result === 'DT':
-        case result === 'ST':
-          return new Token(result, null)
+        case myCol === 1:
+          return new Token('Label', result)
 
-        case instructions.has(result.toUpperCase()): return new Token('Instruction', result.toUpperCase())
-        case /^V[0-9a-fA-F]$/.test(result): return new Token('V', parseInt(result.slice(1), 16))
+        case uresult === 'I':
+        case uresult === 'DT':
+        case uresult === 'ST':
+          return new Token(uresult, null)
+
+        case instructions.has(uresult):
+          return new Token('Instruction', uresult)
+
+        case /^V[0-9A-F]$/.test(uresult):
+          return new Token('V', parseInt(result.slice(1), 16))
+
+        default:
+          return new Token('Identifier', result)
       }
     }
     throw new Error(`Parse error: unexpected character ${c}`)
@@ -127,9 +150,11 @@ module.exports = function (input) {
     if (pos >= input.length) { return null }
     switch (true) {
       case c === ';': skipComment(); return nextToken()
+      case c === ',': read(1); return new Token('Comma', null)
       case c === '#': return scanHexLiteral()
       case c === '%': return scanBinaryLiteral()
       case c === '-' || (c >= '0' && c <= '9'): return scanDecimalLiteral()
+      case c === '"' || c === '`' || c === "'": return scanString()
       default: return scanIdentifier()
     }
   }
