@@ -14,7 +14,7 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "start": "budo ./static/index.js --dir=./static --live --open --host=0.0.0.0",
-    "test": "nyc tape test/*.js"
+    "test": "tape test/*.js"
   },
   "nyc": {
     "reporter": [

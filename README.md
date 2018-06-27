@@ -19,7 +19,7 @@ and thought I'd take a stab at recreating the UI for the web.
 ## Roadmap
 
 - [x] ROM interpreter
-- [ ] Assembler
+- [x] Assembler
 - [ ] Web-based front end
   - [x] ROM selection interface
   - [x] Dynamic canvas size
@@ -29,6 +29,7 @@ and thought I'd take a stab at recreating the UI for the web.
   - [ ] Ability to restart game
   - [ ] Ability to customize key bindings
   - [ ] Speed control
+  - [ ] Ability to run direct assembly source
 - [ ] Publish front end to GitHub pages
 - [ ] Bonus: Implement extra instructions for the SUPER CHIP-8 (SCHIP-8/CHIP-48)
 

@@ -47,11 +47,30 @@ test('scanner recognizes V literals', (t) => {
   t.end()
 })
 
+test('scanner recognizes effective addresses', (t) => {
+  t.deepEqual(scanner(' [I]').nextToken(), { type: 'EffectiveAddress', value: null })
+  t.deepEqual(scanner(' [i]').nextToken(), { type: 'EffectiveAddress', value: null })
+  t.end()
+})
+
 test('scanner recognizes register literals', (t) => {
   const cases = [
-    { input: ' I', expected: 'I' },
     { input: ' DT', expected: 'DT' },
     { input: ' ST', expected: 'ST' }
+  ]
+  cases.forEach(({ input, expected }) => {
+    t.deepEqual(scanner(input).nextToken(), { type: expected, value: null })
+    t.deepEqual(scanner(input.toLowerCase()).nextToken(), { type: expected, value: null })
+  })
+  t.end()
+})
+
+test('scanner recognizes reserved identifiers', (t) => {
+  const cases = [
+    { input: ' B', expected: 'B' },
+    { input: ' F', expected: 'F' },
+    { input: ' I', expected: 'I' },
+    { input: ' K', expected: 'K' }
   ]
   cases.forEach(({ input, expected }) => {
     t.deepEqual(scanner(input).nextToken(), { type: expected, value: null })
@@ -64,6 +83,7 @@ test('scanner recognizes instruction literals', (t) => {
   const cases = [
     'ADD',
     'AND',
+    'BYTE',
     'CALL',
     'CLS',
     'DRW',

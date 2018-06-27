@@ -6,6 +6,7 @@ function Token (type, value) {
 const instructions = new Set([
   'ADD',
   'AND',
+  'BYTE',
   'CALL',
   'CLS',
   'DRW',
@@ -116,6 +117,20 @@ module.exports = function (input) {
     }
   }
 
+  function scanEffectiveAddress () {
+    if (c === '[') {
+      read()
+      if (c === 'I' || c === 'i') {
+        read()
+        if (c === ']') {
+          read()
+          return new Token('EffectiveAddress', null)
+        }
+      }
+    }
+    throw new Error('Parse error: Illegal effective address')
+  }
+
   function scanIdentifier () {
     let result = ''
     const myCol = col
@@ -127,7 +142,10 @@ module.exports = function (input) {
         case myCol === 1:
           return new Token('Label', result)
 
+        case uresult === 'B':
+        case uresult === 'F':
         case uresult === 'I':
+        case uresult === 'K':
         case uresult === 'DT':
         case uresult === 'ST':
           return new Token(uresult, null)
@@ -155,6 +173,7 @@ module.exports = function (input) {
       case c === '%': return scanBinaryLiteral()
       case c === '-' || (c >= '0' && c <= '9'): return scanDecimalLiteral()
       case c === '"' || c === '`' || c === "'": return scanString()
+      case c === '[': return scanEffectiveAddress()
       default: return scanIdentifier()
     }
   }

@@ -66,7 +66,7 @@ function disassemble (vm, addr) {
     case F0FF === 0xF029: return `${formatOpcode(addr)} - LD   F, ${formatReg(x)}`
     case F0FF === 0xF033: return `${formatOpcode(addr)} - LD   B, ${formatReg(x)}`
     case F0FF === 0xF055: return `${formatOpcode(addr)} - LD   [I], ${formatReg(x)}`
-    case F0FF === 0xF065: return `${formatOpcode(addr)} - Ld   ${formatReg(x)}, [I]`
+    case F0FF === 0xF065: return `${formatOpcode(addr)} - LD   ${formatReg(x)}, [I]`
 
     // Some ROMs (e.g., BLITZ) jump to odd-numbered addresses, leaving blips in
     // the address space. Disassembling should simply treat these invalid opcodes
@@ -77,7 +77,6 @@ function disassemble (vm, addr) {
 
 module.exports = function () {
   const vm = new Chip8()
-  // let prevCycle = Date.now()
 
   function step () {
     if (vm.wait !== null) { return }
@@ -156,11 +155,6 @@ module.exports = function () {
 
       default: throw new Error(`Invalid opcode: ${formatOpcode(opcode)}`)
     }
-
-    // const now = Date.now()
-    // if (vm.updateTimers(now - prevCycle)) {
-    //   prevCycle = now
-    // }
   }
 
   function load (buffer) {
