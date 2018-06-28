@@ -2,6 +2,9 @@ const Chip8 = require('../')
 const KeyboardInput = require('./keyboard_input')
 const Router = require('./router')
 const roms = require('./rom_data')
+const boot = require('./c8/boot.c8')
+
+const bootRom = Chip8.assemble(boot)
 
 function throttle (callback, limit) {
   let wait = false
@@ -127,26 +130,26 @@ function OutputPanel (el) {
   }
 
   function renderGame (props) {
-    const { game, rom, kb } = props
-    const gameHelp = Object.keys(game.keys).map((k) => {
-      const help = game.keys[k].toUpperCase()
+    const { romInfo, rom, kb } = props
+    const romHelp = Object.keys(romInfo.keys).map((k) => {
+      const help = romInfo.keys[k].toUpperCase()
       const keys = kb.keyNames(k)
       return `  ${keys.join('/')}: ${help}`
     }).join('\n')
     nav.style.display = 'none'
     output.textContent = `
-LOADING ${game.name}
+LOADING ${romInfo.name}
 ${rom.byteLength} BYTES
 
 KEYS:
-${gameHelp}
+${romHelp}
 
 STARTING PROGRAM;
 `.trim()
   }
 
   function render (props) {
-    if (props && props.game) {
+    if (props && props.romInfo) {
       renderGame(props)
     } else {
       renderIndex()
@@ -220,15 +223,7 @@ function App () {
     }, 250)
   }
 
-  function index () {
-    canvasPanel.render()
-    memoryPanel.render()
-    outputPanel.render()
-    vmPanel.render()
-  }
-
-  function loadGame (name) {
-    const game = roms[name]
+  function runRom (romInfo, loadingRom) {
     let stopped = false
     let paused = false
     let prevRun = window.performance.now()
@@ -278,11 +273,12 @@ function App () {
     events.onresize = () => {
       canvasPanel.resize()
     }
-    getRom(game.name).then((rom) => {
+
+    loadingRom.then((rom) => {
       chip8.vm.reset()
       chip8.load(rom)
       renderVm()
-      outputPanel.render({ game, rom, kb })
+      outputPanel.render({ romInfo, rom, kb })
       window.requestAnimationFrame(run)
     })
 
@@ -291,6 +287,14 @@ function App () {
       delete events.onkeyup
       delete events.onkeydown
     }
+  }
+
+  function index () {
+    return runRom(undefined, Promise.resolve(bootRom))
+  }
+
+  function loadGame (name) {
+    return runRom(roms[name], getRom(name))
   }
 
   function start () {

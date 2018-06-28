@@ -1,4 +1,5 @@
 const Chip8 = require('./chip8')
+const assemble = require('./assembler')
 
 function formatHex (n) {
   return n.toString(16).toUpperCase()
@@ -165,6 +166,7 @@ module.exports = function () {
     vm: vm,
     step: step,
     load: load,
+    assemble: assemble,
     disassemble: disassemble.bind(null, vm),
     keyDown (key) {
       vm.keyDown(key)
@@ -174,3 +176,5 @@ module.exports = function () {
     }
   }
 }
+
+module.exports.assemble = assemble

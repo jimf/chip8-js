@@ -123,11 +123,11 @@ module.exports = {
   TANK: {
     name: 'TANK',
     keys: {
-      2: 'Up',
+      2: 'Down',
       4: 'Left',
       5: 'Fire',
       6: 'Right',
-      8: 'Down'
+      8: 'Up'
     }
   },
   TETRIS: {
