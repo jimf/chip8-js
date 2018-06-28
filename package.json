@@ -9,7 +9,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "rimraf dist && mkdir dist && cp public/index.html dist && npm run build-js && npm run build-css",
-    "build-js": "browserify public/index.js | minify > dist/main.js",
+    "build-js": "browserify public/index.js | minify > dist/index.js",
     "build-css": "uglifycss public/styles.css > dist/styles.css",
     "deploy": "gh-pages -d dist",
     "lint": "standard",
