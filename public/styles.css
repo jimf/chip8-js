@@ -68,8 +68,9 @@ a:focus {
 }
 .output-pane__navlist li {
   float: left;
-  height: 22px;
-  width: 100px;
+  overflow: hidden;
+  padding: 2px;
+  width: 12vw;
 }
 
 #canvas {
@@ -80,6 +81,4 @@ a:focus {
   top: 50%;
   transform: translateY(-50%);
   width: 512px;
-  /* height: 100%; */
-  /* width: 100%; */
 }

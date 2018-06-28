@@ -60,12 +60,17 @@ function CanvasPanel (el) {
   }
 
   function resize () {
-    const newWidth = el.clientWidth - (el.clientWidth % 64)
+    const elW = el.clientWidth
+    const elH = el.clientHeight
+    const dim = (elW / elH) < 2.14 ? elW : elH
+    const newWidth = Math.max(dim - (dim % 64), 64)
     if (newWidth === canvasW) { return }
     canvasW = newWidth
     canvasH = canvasW / 2
-    canvas.width = canvasW
-    canvas.height = canvasH
+    canvas.setAttribute('width', canvasW)
+    canvas.setAttribute('height', canvasH)
+    canvas.style.width = canvasW + 'px'
+    canvas.style.height = canvasH + 'px'
     ctx.fillStyle = '#8F9185'
     ctx.strokeStyle = '#8F9185'
   }
