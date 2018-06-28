@@ -8,12 +8,12 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "build": "rimraf dist && mkdir dist && cp static/index.html dist && npm run build-js && npm run build-css",
-    "build-js": "browserify static/index.js | minify > dist/main.js",
-    "build-css": "uglifycss static/styles.css > dist/styles.css",
+    "build": "rimraf dist && mkdir dist && cp public/index.html dist && npm run build-js && npm run build-css",
+    "build-js": "browserify public/index.js | minify > dist/main.js",
+    "build-css": "uglifycss public/styles.css > dist/styles.css",
     "lint": "standard",
     "pretest": "npm run lint",
-    "start": "budo ./static/index.js --dir=./static --live --open --host=0.0.0.0",
+    "start": "budo ./public/index.js --dir=./public --live --open --host=0.0.0.0",
     "test": "tape test/*.js"
   },
   "nyc": {
