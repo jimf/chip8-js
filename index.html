@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CHIP-8 JS</title>
+  <meta name="description" content="CHIP-8 Interpreter">
+  <meta name="author" content="Jim Fitzpatrick">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col display-pane">
+        <canvas id="canvas" width="512" height="256"></canvas>
+      </div>
+      <div class="col memory-pane pre"></div>
+    </div>
+    <div class="row">
+      <div class="col output-pane"><a href="https://github.com/jimf/chip8-js">CHIP8-JS</a>
+        <br>
+        <br>
+        <div class="output-pane__output pre"></div>
+        <div class="output-pane__nav">SELECT ROM:
+          <nav>
+            <ul class="output-pane__navlist"></ul>
+          </nav>
+        </div>
+      </div>
+      <div class="col state-pane pre"></div>
+    </div>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>
